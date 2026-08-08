@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch.2-3 Handbook (VERIFIED) — RAG Part I & II</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+:root{
+  --bg:#0d1117; --bg2:#161b22; --text:#e6edf3; --muted:#8b949e;
+  --accent:#3fb950; --border:#30363d; --card:#161b22; --code-bg:#1e242c;
+  --callout-info:#1f6feb33; --callout-warn:#d2992255; --callout-danger:#f8514933;
+  --sidebar-w:290px;
+}
+[data-theme="light"]{
+  --bg:#ffffff; --bg2:#f6f8fa; --text:#1f2328; --muted:#57606a;
+  --accent:#1a7f37; --border:#d0d7de; --card:#f6f8fa; --code-bg:#f6f8fa;
+  --callout-info:#ddf4ff; --callout-warn:#fff8c5; --callout-danger:#ffebe9;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--text); display:flex; min-height:100vh;}
+#progress{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:1000;transition:width .1s;}
+#sidebar{width:var(--sidebar-w); position:sticky; top:0; height:100vh; overflow-y:auto; background:var(--bg2); border-right:1px solid var(--border); padding:16px; flex-shrink:0;}
+#sidebar h2{font-size:15px; color:var(--accent); margin:18px 0 6px;}
+#sidebar h2:first-child{margin-top:0;}
+#sidebar a{display:block; color:var(--text); text-decoration:none; font-size:13px; padding:5px 8px; border-radius:6px;}
+#sidebar a:hover{background:var(--border);}
+#search{width:100%; padding:8px 10px; margin-bottom:12px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:13px;}
+#main{flex:1; padding:32px 48px; max-width:1050px;}
+.topbar{position:sticky; top:0; background:var(--bg); z-index:10; display:flex; justify-content:space-between; align-items:center; padding:8px 0 16px; border-bottom:1px solid var(--border); margin-bottom:24px;}
+.topbar .title{font-weight:700; font-size:15px; color:var(--muted);}
+#themeToggle{background:var(--card); border:1px solid var(--border); color:var(--text); padding:6px 12px; border-radius:8px; cursor:pointer; font-size:13px;}
+h1{font-size:27px; border-bottom:2px solid var(--accent); padding-bottom:10px;}
+h2{font-size:21px; margin-top:44px; color:var(--accent); border-left:4px solid var(--accent); padding-left:10px;}
+h3{font-size:17px; margin-top:26px;}
+h4{font-size:14px; color:var(--muted); margin-top:18px;}
+p, li{line-height:1.65; font-size:15px;}
+table{width:100%; border-collapse:collapse; margin:14px 0; font-size:13.5px;}
+th, td{border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top;}
+th{background:var(--bg2);}
+tr:nth-child(even){background:var(--bg2);}
+code{background:var(--code-bg); padding:2px 6px; border-radius:4px; font-size:13px;}
+pre{background:var(--code-bg); border:1px solid var(--border); border-radius:8px; padding:14px; overflow-x:auto; position:relative;}
+pre code{background:none; padding:0;}
+.copy-btn{position:absolute; top:8px; right:8px; background:var(--accent); color:#111; border:none; padding:4px 10px; border-radius:6px; font-size:11px; cursor:pointer; opacity:0.9; font-weight:600;}
+.card{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 20px; margin:16px 0;}
+.callout{border-radius:10px; padding:14px 16px; margin:16px 0; border-left:4px solid var(--accent);}
+.callout.verified{background:var(--callout-info); border-color:#3fb950;}
+.callout.warn{background:var(--callout-warn); border-color:#d29922;}
+.callout.danger{background:var(--callout-danger); border-color:#f85149;}
+.badge{display:inline-block; background:var(--accent); color:#111; font-size:11px; padding:2px 8px; border-radius:20px; margin-right:6px; font-weight:600;}
+.badge.fixed{background:#d29922;}
+#backToTop{position:fixed; bottom:24px; right:24px; background:var(--accent); color:#111; border:none; width:44px; height:44px; border-radius:50%; font-size:18px; cursor:pointer; display:none; z-index:999; font-weight:700;}
+.mermaid{background:var(--bg2); border-radius:10px; padding:10px;}
+@media print{ #sidebar,.topbar,#backToTop,#progress,.copy-btn{display:none !important;} #main{max-width:100%;} }
+@media (max-width:900px){ #sidebar{position:fixed; left:-310px; z-index:1001; transition:left .2s;} #sidebar.open{left:0;} #main{padding:20px;} #menuBtn{display:inline-block !important;} }
+#menuBtn{display:none; background:var(--card); border:1px solid var(--border); color:var(--text); padding:6px 12px; border-radius:8px; cursor:pointer;}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<nav id="sidebar">
+  <input id="search" placeholder="🔍 Search... (Ctrl+K)"/>
+  <h2>Overview</h2>
+  <a href="#overview">1. Chapter Overview</a>
+  <a href="#roadmap">2. Learning Roadmap</a>
+  <a href="#flow">3. Chapter Flow</a>
+  <h2>Ch.2 — Indexing</h2>
+  <a href="#t1">The Goal</a>
+  <a href="#t2">Embeddings Before LLMs</a>
+  <a href="#t3">LLM-Based Embeddings</a>
+  <a href="#t4">Semantic Embeddings</a>
+  <a href="#t5">Document Loaders</a>
+  <a href="#t6">Text Splitting</a>
+  <a href="#t7">Generating Embeddings</a>
+  <a href="#t8">Vector Store / PGVector</a>
+  <a href="#t9">MultiVectorRetriever</a>
+  <a href="#t10">RAPTOR</a>
+  <a href="#t11">ColBERT</a>
+  <h2>Ch.3 — Retrieval</h2>
+  <a href="#t12">Introducing RAG</a>
+  <a href="#t13">Retrieving Documents</a>
+  <a href="#t14">Generating Predictions</a>
+  <a href="#t15">Rewrite-Retrieve-Read</a>
+  <a href="#t16">Multi-Query</a>
+  <a href="#t17">RAG-Fusion</a>
+  <a href="#t18">HyDE</a>
+  <a href="#t19">Logical Routing</a>
+  <a href="#t20">Semantic Routing</a>
+  <a href="#t21">Text-to-Metadata Filter</a>
+  <a href="#t22">Text-to-SQL</a>
+  <h2>Reference</h2>
+  <a href="#apitable">Function/API Table</a>
+  <a href="#comparisons">Comparison Tables</a>
+  <a href="#decisiontree">Decision Tree</a>
+  <a href="#interviewq">Interview Questions</a>
+  <a href="#cheatsheet">Cheat Sheet</a>
+  <a href="#corrections">Corrections Log</a>
+</nav>
+<div id="main">
+  <div class="topbar">
+    <div><button id="menuBtn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+    <span class="title">Learning LangChain — Ch.2-3 Handbook (VERIFIED)</span></div>
+    <button id="themeToggle" onclick="toggleTheme()">☀️/🌙</button>
+  </div>
+
+  <h1>📗 Chapters 2–3: RAG Part I & II</h1>
+  <div class="callout verified">
+    <strong>✅ Verified Edition:</strong> Cross-checked directly against the actual chapter text of <em>Learning LangChain</em> by Oshin &amp; Campos (Ch.2: "RAG Part I: Indexing Your Data", Ch.3: "RAG Part II: Chatting with Your Data"). This supersedes and corrects an earlier speculative draft — see the <a href="#corrections">Corrections Log</a>.
+  </div>
+
+  <h2 id="overview">1. Chapter Overview</h2>
+  <table>
+    <tr><th>Item</th><th>Details</th></tr>
+    <tr><td>Real titles</td><td>Ch.2: "RAG Part I: Indexing Your Data" — Ch.3: "RAG Part II: Chatting with Your Data"</td></tr>
+    <tr><td>What they teach</td><td>Full RAG pipeline: the quantity problem → embeddings → document loading → chunking → PGVector storage → tracking document changes → indexing optimization (MultiVectorRetriever, RAPTOR, ColBERT) → retrieval → generation → query transformation (Rewrite-Retrieve-Read, Multi-Query, RAG-Fusion, HyDE) → query routing (logical, semantic) → query construction (metadata filter, text-to-SQL)</td></tr>
+    <tr><td>Difficulty</td><td><span class="badge">⭐⭐⭐⭐☆ Intermediate–Advanced</span></td></tr>
+  </table>
+
+  <h2 id="roadmap">2. Learning Roadmap (Verified Order)</h2>
+  <div class="mermaid">
+flowchart TD
+A["LLMs lack private data / current events (knowledge cutoff)"] --> B["The Goal: quantity problem"]
+B --> C["Embeddings Before LLMs (sparse/bag-of-words)"]
+C --> D["LLM-Based Embeddings (dense)"]
+D --> E["Semantic Embeddings Explained (cosine similarity)"]
+E --> F["Converting Documents into Text (loaders)"]
+F --> G["Splitting Text into Chunks (RecursiveCharacterTextSplitter)"]
+G --> H["Generating Text Embeddings"]
+H --> I["Storing in Vector Store (PGVector)"]
+I --> J["Tracking Document Changes (SQLRecordManager)"]
+J --> K["Indexing Optimization: MultiVectorRetriever -> RAPTOR -> ColBERT"]
+K --> L["Ch.3: Introducing RAG"]
+L --> M["Retrieving Relevant Documents"]
+M --> N["Generating LLM Predictions"]
+N --> O["Query Transformation: Rewrite-Retrieve-Read -> Multi-Query -> RAG-Fusion -> HyDE"]
+O --> P["Query Routing: Logical -> Semantic"]
+P --> Q["Query Construction: Metadata Filter -> Text-to-SQL"]
+  </div>
+
+  <h2 id="flow">3. Chapter Flow Explanation</h2>
+  <p>Ch.2 opens by stating the real problem is <strong>quantity</strong> — too much data to fit one prompt. Embeddings are taught conceptually (sparse → dense → cosine similarity) before any code, then the four-step ingestion pipeline (load → split → embed → store) is built step by step, with indexing optimization introduced last, once the "naive" pipeline's weaknesses are exposed. Ch.3 shifts to runtime: retrieval and generation shown simply first, then four production questions are posed, structuring the rest of the chapter around query transformation (fixing the query text), routing (picking the source), and construction (translating to a source's native query language).</p>
+
+  <h2 id="t1">Topic: The Goal — Picking Relevant Context for LLMs <span class="badge">⭐☆☆☆☆</span></h2>
+  <p><strong>Two limitations of LLM knowledge (verbatim):</strong> Private data (not in training data by definition) and current events (the <strong>knowledge cutoff</strong> — training is too costly/slow to stay current).</p>
+  <p><strong>Two-step solution:</strong> (1) Indexing — preprocess documents for easy search (Ch.2). (2) Retrieving — pull relevant data as context at query time (Ch.3).</p>
+
+  <h2 id="t2">Topic: Embeddings Before LLMs <span class="badge">⭐⭐☆☆☆</span></h2>
+  <p>Pre-LLM <strong>bag-of-words</strong> technique: count word occurrences per sentence across a vocabulary → <strong>sparse embeddings</strong> (mostly zeros). Book example: three sentences about sunny days converted into a word-frequency table (Table 2-1). Used for keyword search and spam classification.</p>
+  <div class="callout warn"><strong>Limitation:</strong> No awareness of meaning — "sunny day" and "bright skies" share no words despite similar meaning.</div>
+
+  <h2 id="t3">Topic: LLM-Based Embeddings <span class="badge">⭐⭐☆☆☆</span></h2>
+  <p>Embedding models trained similarly to LLMs but dedicated to producing numeric representations → <strong>dense embeddings</strong> (100–2,000 floats, mostly nonzero). <strong>Key rule:</strong> embeddings from different models can never be combined/compared, even if sizes match.</p>
+
+  <h2 id="t4">Topic: Semantic Embeddings Explained <span class="badge">⭐⭐⭐☆☆</span></h2>
+  <p>Book's lion/pet/dog example (Figures 2-2, 2-3) shows semantically similar words land close in vector space. <strong>Cosine similarity</strong> = dot product ÷ product of magnitudes → range −1 to 1 (0 = no correlation, 1 = identical, −1 = opposite). Book example: pet–dog ≈ 0.75, pet–lion ≈ 0.1.</p>
+  <div class="callout info"><strong>Additional Interview Knowledge (book sidebar):</strong> Distance = similarity; clustering finds topics; averaging embeddings summarizes a document; vector arithmetic (king − man + woman ≈ queen); multimodal embeddings exist (image/video/sound). Uses: search, clustering, classification, recommendation, anomaly detection.</div>
+
+  <h2 id="t5">Topic: Converting Your Documents into Text <span class="badge">⭐⭐☆☆☆</span></h2>
+  <p><strong>3-step loader pattern:</strong> (1) Pick the loader for your document type (2) Instantiate with config (3) Call <code>.load()</code> → list of <code>Document</code> objects.</p>
+  <p><strong>Named loaders:</strong> <code>TextLoader</code> (.txt), <code>WebBaseLoader</code>/<code>CheerioWebBaseLoader</code> (HTML, needs beautifulsoup4/cheerio), <code>PyPDFLoader</code>/<code>PDFLoader</code> (PDF, needs pypdf/pdf-parse). Also: .csv, .json, Markdown, Slack, Notion.</p>
+  <div class="callout warn"><strong>Context window:</strong> The hard token limit on input+output for LLMs/embedding models (e.g., 8,192 tokens) — the reason a 100,000+ character PDF must be split next.</div>
+
+  <h2 id="t6">Topic: Splitting Your Text into Chunks <span class="badge">⭐⭐⭐☆☆</span></h2>
+  <p><code>RecursiveCharacterTextSplitter</code> 4-step algorithm: (1) ordered separators — paragraph <code>\n\n</code>, line <code>\n</code>, word (2) split by paragraph first to respect chunk_size (3) fall back to smaller separators if still too long (4) emit each chunk as a <code>Document</code> with position metadata. Params: <code>chunk_size=1000, chunk_overlap=200</code>.</p>
+  <p><strong>Language-aware:</strong> <code>.from_language(language=Language.PYTHON, ...)</code> uses code keywords as separators (keeps functions intact); supports Python, JS, Markdown, HTML. <code>create_documents()</code> accepts raw strings + optional metadata list.</p>
+
+  <h2 id="t7">Topic: Generating Text Embeddings <span class="badge">⭐⭐☆☆☆</span></h2>
+  <p><code>Embeddings</code> class interfaces OpenAI/Cohere/Hugging Face: <code>embed_documents()</code> (list→list of vectors), <code>embed_query()</code> (string→vector). <strong>Best practice:</strong> embed multiple documents at once — more efficient than one at a time.</p>
+
+  <h2 id="t8">Topic: Storing Embeddings in a Vector Store (PGVector) <span class="badge">⭐⭐⭐☆☆</span></h2>
+  <p><strong>Stated disadvantages of dedicated vector stores:</strong> relatively new/unproven; steep learning curve; separate DB adds complexity. <strong>PGVector</strong> solves this by adding vector capability directly into PostgreSQL.</p>
+  <p><strong>Docker setup (verbatim):</strong></p>
+  <pre><code>docker run --name pgvector-container \
+  -e POSTGRES_USER=langchain -e POSTGRES_PASSWORD=langchain \
+  -e POSTGRES_DB=langchain -p 6024:5432 -d pgvector/pgvector:pg16</code></pre>
+  <p><strong>Core API:</strong> <code>PGVector.from_documents(documents, embeddings_model, connection=connection)</code>, <code>db.similarity_search("query", k=4)</code>, <code>db.add_documents([...], ids=[...])</code>, <code>db.delete(ids=[...])</code>.</p>
+  <h3>Tracking Changes to Your Documents</h3>
+  <p><strong>Problem:</strong> re-indexing changed data risks costly recomputation + duplicates. <strong>Solution:</strong> indexing API with <code>SQLRecordManager</code>, tracking per document: <strong>hash</strong> (content+metadata), <strong>write time</strong>, <strong>source ID</strong>.</p>
+  <table>
+    <tr><th>Cleanup Mode</th><th>Behavior</th></tr>
+    <tr><td><code>None</code></td><td>No automatic cleanup — manual only</td></tr>
+    <tr><td><code>incremental</code></td><td>Deletes previous versions if content changed</td></tr>
+    <tr><td><code>full</code></td><td>Same as incremental, PLUS deletes docs missing from current batch</td></tr>
+  </table>
+
+  <h2 id="t9">Topic: MultiVectorRetriever <span class="badge">⭐⭐⭐⭐☆</span></h2>
+  <p><strong>Problem (verbatim):</strong> a document mixing text and tables can't simply be chunked — a table can be easily lost. <strong>Solution:</strong> decouple the document for answer synthesis from the reference used for retrieval (Fig 2-5).</p>
+  <p><strong>Flow:</strong> (1) LLM-generate summaries via <code>summarize_chain.batch(chunks, {"max_concurrency": 5})</code> (2) store summaries + <code>doc_id</code> in vector store (3) store full original chunks in a separate <code>InMemoryStore</code> docstore keyed by same <code>doc_id</code> (4) <code>MultiVectorRetriever(vectorstore=..., docstore=..., id_key="doc_id")</code> — <code>.vectorstore.similarity_search()</code> returns summaries, but <code>.invoke()</code> returns full original chunks.</p>
+
+  <h2 id="t10">Topic: RAPTOR <span class="badge">⭐⭐⭐⭐⭐</span></h2>
+  <p><strong>Definition (verbatim):</strong> "Recursive abstractive processing for tree-organized retrieval" — creates summaries capturing higher-level concepts, embeds/clusters them, summarizes each cluster, recursively (Fig 2-6). Source: Sarthi et al., ICLR 2024.</p>
+  <div class="callout info"><strong>Problem solved:</strong> RAG must handle both low-level (single-document fact) AND high-level (cross-document theme) questions — a challenge for typical k-NN retrieval over chunks.</div>
+
+  <h2 id="t11">Topic: ColBERT <span class="badge">⭐⭐⭐⭐⭐</span></h2>
+  <p><strong>Problem (verbatim):</strong> fixed-length embeddings compress text, and embedding irrelevant/redundant content may cause hallucination.</p>
+  <p><strong>3-step solution:</strong> (1) contextual embeddings per token, query and document (2) similarity between each query token and all document tokens (3) sum the <strong>maximum</strong> similarity per query token across document tokens = document score.</p>
+  <p><strong>Code:</strong> Uses <code>RAGatouille</code> — <code>RAGPretrainedModel.from_pretrained("colbert-ir/colbertv2.0")</code>, <code>.index(...)</code>, <code>.search(query=..., k=3)</code>, <code>.as_langchain_retriever(k=3)</code>. Source: Santhanam et al., ColBERTv2.</p>
+
+  <h2 id="t12">Topic: Introducing Retrieval-Augmented Generation <span class="badge">⭐⭐☆☆☆</span></h2>
+  <p>Term coined by Meta AI (Lewis et al., 2021) — RAG models are more factual/specific. Book's FIFA World Cup example shows outdated answer (France 2018) fixed by pasting correct Wikipedia context (Argentina 2022).</p>
+  <p><strong>Three RAG stages:</strong> Indexing (Ch.2) → Retrieval → Generation.</p>
+
+  <h2 id="t13">Topic: Retrieving Relevant Documents <span class="badge">⭐⭐☆☆☆</span></h2>
+  <p><code>db.as_retriever()</code> abstracts embedding the query + similarity search. <code>search_kwargs={"k": 2}</code> controls result count.</p>
+  <div class="callout danger"><strong>Explicit warning:</strong> more documents is NOT always better — slower app, larger/costlier prompt, higher chance of irrelevant chunks causing hallucination.</div>
+
+  <h2 id="t14">Topic: Generating LLM Predictions Using Relevant Documents <span class="badge">⭐⭐☆☆☆</span></h2>
+  <p>Pattern: <code>ChatPromptTemplate</code> with <code>{context}</code>/<code>{question}</code> → <code>prompt | llm</code>. Encapsulate as a single <code>@chain</code>/<code>RunnableLambda</code> function <code>qa</code> for a one-call RAG pipeline; can return <code>{"answer":..., "docs":...}</code>.</p>
+  <p><strong>Four production questions posed:</strong> (1) handling poor user input (2) routing to multiple sources (3) translating NL to target query language (4) optimizing indexing.</p>
+
+  <h2 id="t15">Topic: Rewrite-Retrieve-Read <span class="badge">⭐⭐⭐☆☆</span></h2>
+  <p>Microsoft Research technique (Ma et al., 2023) — LLM rewrites the query before retrieval. Book demo: a distracted rambling query makes basic RAG fail entirely; a <code>rewrite_prompt</code> generating a cleaner search query (ending in <code>**</code>) fixes it.</p>
+  <div class="callout warn">Downside: extra latency from two sequential LLM calls.</div>
+
+  <h2 id="t16">Topic: Multi-Query Retrieval <span class="badge">⭐⭐⭐☆☆</span></h2>
+  <p>LLM generates multiple query variants → parallel retrieval → combine. Best for questions needing multiple perspectives. <code>get_unique_union()</code> dedupes by <code>page_content</code> as dict key; <code>retriever.batch</code> runs variants in parallel.</p>
+
+  <h2 id="t17">Topic: RAG-Fusion <span class="badge">⭐⭐⭐⭐☆</span></h2>
+  <p>Multi-query + <strong>Reciprocal Rank Fusion (RRF)</strong> reranking (Rackauckas, 2024). Formula: sum <code>1/(rank+k)</code> per document across all query lists, sort descending. Uses <strong>rank</strong> not raw score — robust across different score scales.</p>
+
+  <h2 id="t18">Topic: Hypothetical Document Embeddings (HyDE) <span class="badge">⭐⭐⭐⭐☆</span></h2>
+  <p>Gao et al., 2022 — LLM generates a <strong>hypothetical answer</strong>; that passage's embedding (not the question's) drives retrieval, since it's more similar to real relevant documents (Fig 3-7). <code>retrieval_chain = generate_doc | retriever</code>.</p>
+
+  <h2 id="t19">Topic: Logical Routing <span class="badge">⭐⭐⭐☆☆</span></h2>
+  <p>Function-calling LLM (e.g., GPT-3.5 Turbo) picks from a defined <code>Literal</code> list of data sources via Pydantic <code>RouteQuery</code> + <code>with_structured_output</code>. <code>choose_route()</code> uses case-insensitive substring match — explicitly for resilience against imperfect LLM output.</p>
+
+  <h2 id="t20">Topic: Semantic Routing <span class="badge">⭐⭐⭐☆☆</span></h2>
+  <p>Embeds route-representative prompts (e.g., physics professor, mathematician) + the query, picks the route via <code>cosine_similarity(...).argmax()</code>.</p>
+
+  <h2 id="t21">Topic: Text-to-Metadata Filter <span class="badge">⭐⭐⭐⭐☆</span></h2>
+  <p><code>SelfQueryRetriever</code> + <code>AttributeInfo</code> (name/description/type per field) translate NL into a metadata filter + semantic query. 4-step mechanism: prompt LLM → parse filter+query → convert filter to vector-store format → filtered similarity search.</p>
+
+  <h2 id="t22">Topic: Text-to-SQL <span class="badge">⭐⭐⭐⭐☆</span></h2>
+  <p>Two strategies: (1) database description via <code>CREATE TABLE</code> + example rows (Rajkumar et al., 2022) (2) few-shot question-query examples. Code: <code>create_sql_query_chain(llm, db)</code> → <code>QuerySQLDatabaseTool(db=db)</code>.</p>
+  <div class="callout danger"><strong>Security (verbatim, non-exhaustive):</strong> read-only DB user; scope to specific tables only; add query timeouts.</div>
+
+  <h2 id="apitable">Function / API Reference (Verified)</h2>
+  <table>
+    <tr><th>Name</th><th>Purpose</th></tr>
+    <tr><td><code>TextLoader</code>, <code>WebBaseLoader</code>, <code>PyPDFLoader</code></td><td>Document loaders → <code>Document</code></td></tr>
+    <tr><td><code>RecursiveCharacterTextSplitter</code></td><td>Hierarchical chunking; <code>.from_language()</code> for code</td></tr>
+    <tr><td><code>OpenAIEmbeddings</code></td><td><code>embed_documents()</code>, <code>embed_query()</code></td></tr>
+    <tr><td><code>PGVector</code></td><td><code>.from_documents()</code>, <code>.similarity_search()</code>, <code>.add_documents()</code>, <code>.delete()</code>, <code>.as_retriever()</code></td></tr>
+    <tr><td><code>SQLRecordManager</code> + <code>index()</code></td><td>Hash/write-time/source-ID tracking; incremental/full cleanup</td></tr>
+    <tr><td><code>MultiVectorRetriever</code></td><td>vectorstore + docstore + id_key</td></tr>
+    <tr><td><code>RAGPretrainedModel</code> (RAGatouille)</td><td>ColBERT indexing/search</td></tr>
+    <tr><td><code>SelfQueryRetriever</code> + <code>AttributeInfo</code></td><td>NL → metadata filter</td></tr>
+    <tr><td><code>create_sql_query_chain</code> + <code>QuerySQLDatabaseTool</code></td><td>NL → SQL → execution</td></tr>
+    <tr><td><code>reciprocal_rank_fusion()</code></td><td>Custom RRF merge for RAG-Fusion</td></tr>
+  </table>
+
+  <h2 id="comparisons">Comparison Tables</h2>
+  <table>
+    <tr><th></th><th>Fixes</th><th>Mechanism</th></tr>
+    <tr><td>MultiVectorRetriever</td><td>Tables lost in naive chunking</td><td>Multiple representations → 1 parent doc</td></tr>
+    <tr><td>RAPTOR</td><td>Flat retrieval misses cross-doc themes</td><td>Recursive cluster+summarize tree</td></tr>
+    <tr><td>ColBERT</td><td>Fixed-length vectors lose token precision</td><td>Per-token embeddings + MaxSim</td></tr>
+  </table>
+  <table>
+    <tr><th></th><th>What changes</th><th>Extra LLM calls</th></tr>
+    <tr><td>Rewrite-Retrieve-Read</td><td>Rewrites the query</td><td>1</td></tr>
+    <tr><td>Multi-Query</td><td>N variants, dedupe</td><td>1</td></tr>
+    <tr><td>RAG-Fusion</td><td>N variants + RRF rerank</td><td>1</td></tr>
+    <tr><td>HyDE</td><td>Embeds hypothetical answer</td><td>1</td></tr>
+  </table>
+
+  <h2 id="decisiontree">Decision Tree</h2>
+  <div class="mermaid">
+flowchart TD
+A[Document mixes text/tables?] -->|Yes| B[MultiVectorRetriever]
+A -->|No| C[Need cross-document theme answers?]
+C -->|Yes| D[RAPTOR]
+C -->|No| E[Need max term-level precision?]
+E -->|Yes| F[ColBERT]
+E -->|No| G[Is user query poorly phrased?]
+G -->|Yes| H[Rewrite-Retrieve-Read / Multi-Query]
+G -->|No| I[Need smarter multi-query merging?]
+I -->|Yes| J[RAG-Fusion]
+I -->|No| K[Big question/answer style gap?]
+K -->|Yes| L[HyDE]
+K -->|No| M[Multiple data sources?]
+M -->|Yes| N[Logical / Semantic Routing]
+M -->|No| O[Structured/filterable data?]
+O -->|Yes| P[Metadata Filter / Text-to-SQL]
+  </div>
+
+  <h2 id="interviewq">Sample Interview Questions (Verified)</h2>
+  <table>
+    <tr><th>Q</th><th>A</th></tr>
+    <tr><td>What two limitations of LLM knowledge does the book name?</td><td>Private data and current events (knowledge cutoff)</td></tr>
+    <tr><td>What three fields does SQLRecordManager track?</td><td>Document hash, write time, source ID</td></tr>
+    <tr><td>Difference between incremental and full cleanup?</td><td>Full additionally deletes docs missing from the current batch</td></tr>
+    <tr><td>What does RRF use to score documents?</td><td>Rank position, not raw similarity score</td></tr>
+    <tr><td>Why does logical routing use substring match, not exact match?</td><td>Resilience to imperfect/off-script LLM output</td></tr>
+    <tr><td>Name two SQL security mitigations from the book.</td><td>Read-only DB user; scoped table access; query timeouts (any two)</td></tr>
+  </table>
+
+  <h2 id="cheatsheet">Cheat Sheet</h2>
+  <pre><code>CH.2 — INDEXING
+Goal: pick relevant context (quantity problem)
+Embeddings: sparse (bag-of-words) -> dense (LLM-based) -> cosine similarity
+Pipeline: Loaders -> RecursiveCharacterTextSplitter -> Embeddings -> PGVector
+PGVector: from_documents() / similarity_search() / add_documents() / delete()
+Tracking changes: SQLRecordManager + index(cleanup="incremental"|"full"|None)
+Indexing optimization:
+  MultiVectorRetriever -> multi representations -> 1 parent doc
+  RAPTOR -> recursive cluster+summarize tree
+  ColBERT -> per-token embeddings + MaxSim
+
+CH.3 — RETRIEVAL & GENERATION
+RAG stages: Indexing -> Retrieval -> Generation
+as_retriever(search_kwargs={"k": N}) -- more docs != better
+Query Transformation:
+  Rewrite-Retrieve-Read -> LLM rewrites query
+  Multi-Query -> N variants, dedupe
+  RAG-Fusion -> N variants + Reciprocal Rank Fusion
+  HyDE -> embed hypothetical ANSWER
+Query Routing:
+  Logical -> function-calling LLM picks from Literal list
+  Semantic -> cosine similarity vs. route prompt embeddings
+Query Construction:
+  Text-to-Metadata Filter -> SelfQueryRetriever + AttributeInfo
+  Text-to-SQL -> create_sql_query_chain + QuerySQLDatabaseTool
+</code></pre>
+
+  <h2 id="corrections">Corrections Log (vs. earlier unverified draft)</h2>
+  <ul>
+    <li><span class="badge fixed">Fixed</span> Added the missing opening topic "The Goal: Picking Relevant Context for LLMs" and the sparse→dense embeddings conceptual progression.</li>
+    <li><span class="badge fixed">Fixed</span> Added the entirely missing "Converting Your Documents into Text" (document loaders) topic.</li>
+    <li><span class="badge fixed">Fixed</span> Replaced generic HNSW/IVFFlat trade-off talk with the book's actual PGVector Docker setup, CRUD API, and "Tracking Changes to Your Documents" (SQLRecordManager/index API) section — entirely missing before.</li>
+    <li><span class="badge fixed">Fixed</span> Added the missing "Rewrite-Retrieve-Read" query transformation technique (comes before Multi-Query in the book).</li>
+    <li><span class="badge fixed">Corrected</span> Routing: previously mislabeled as "Additional Interview Knowledge" — it is fully verbatim book content (Logical Routing with function calling + Semantic Routing with cosine similarity).</li>
+    <li><span class="badge fixed">Corrected</span> Query Construction: previously mislabeled as "Additional Interview Knowledge" — it is fully verbatim book content (SelfQueryRetriever + AttributeInfo for metadata filters; create_sql_query_chain for text-to-SQL).</li>
+    <li><span class="badge fixed">Added</span> Verbatim security warnings for text-to-SQL and the book's exact RRF/ColBERT/RAPTOR mechanics.</li>
+  </ul>
+
+  <p style="margin-top:50px; color:var(--muted); font-size:12px;">⌨️ Ctrl+K to search · Ctrl+D to toggle theme.</p>
+</div>
+<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script>
+mermaid.initialize({startOnLoad:true, theme:'dark'});
+hljs.highlightAll();
+function toggleTheme(){
+  const html=document.documentElement;
+  const next = html.getAttribute('data-theme')==='dark' ? 'light':'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  mermaid.initialize({theme: next==='dark'?'dark':'default'});
+}
+if(localStorage.getItem('theme')) document.documentElement.setAttribute('data-theme', localStorage.getItem('theme'));
+window.addEventListener('scroll', ()=>{
+  const h=document.documentElement;
+  document.getElementById('progress').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+  document.getElementById('backToTop').style.display = h.scrollTop>400?'block':'none';
+});
+document.querySelectorAll('pre').forEach(pre=>{
+  const btn=document.createElement('button'); btn.className='copy-btn'; btn.textContent='Copy';
+  btn.onclick=()=>{navigator.clipboard.writeText(pre.innerText); btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy',1500);};
+  pre.appendChild(btn);
+});
+document.getElementById('search').addEventListener('input', function(){
+  const q=this.value.toLowerCase();
+  document.querySelectorAll('#sidebar a').forEach(a=>{a.style.display=a.textContent.toLowerCase().includes(q)?'block':'none';});
+});
+document.addEventListener('keydown',(e)=>{
+  if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();document.getElementById('search').focus();}
+  if((e.ctrlKey||e.metaKey)&&e.key==='d'){e.preventDefault();toggleTheme();}
+});
+</script>
+</body>
+</html>

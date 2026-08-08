@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch.1 Handbook (VERIFIED) — LLM Interfaces, Prompts, Structured Output & LCEL</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+:root{
+  --bg:#0d1117; --bg2:#161b22; --text:#e6edf3; --muted:#8b949e;
+  --accent:#3fb950; --border:#30363d; --card:#161b22; --code-bg:#1e242c;
+  --callout-info:#1f6feb33; --callout-warn:#d2992233; --callout-danger:#f8514933;
+  --sidebar-w:280px;
+}
+[data-theme="light"]{
+  --bg:#ffffff; --bg2:#f6f8fa; --text:#1f2328; --muted:#57606a;
+  --accent:#1a7f37; --border:#d0d7de; --card:#f6f8fa; --code-bg:#f6f8fa;
+  --callout-info:#ddf4ff; --callout-warn:#fff8c5; --callout-danger:#ffebe9;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--text); display:flex; min-height:100vh;}
+#progress{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:1000;transition:width .1s;}
+#sidebar{width:var(--sidebar-w); position:sticky; top:0; height:100vh; overflow-y:auto; background:var(--bg2); border-right:1px solid var(--border); padding:16px; flex-shrink:0;}
+#sidebar h2{font-size:15px; color:var(--accent); margin:18px 0 6px;}
+#sidebar h2:first-child{margin-top:0;}
+#sidebar a{display:block; color:var(--text); text-decoration:none; font-size:13.5px; padding:5px 8px; border-radius:6px;}
+#sidebar a:hover{background:var(--border);}
+#search{width:100%; padding:8px 10px; margin-bottom:12px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:13px;}
+#main{flex:1; padding:32px 48px; max-width:1000px;}
+.topbar{position:sticky; top:0; background:var(--bg); z-index:10; display:flex; justify-content:space-between; align-items:center; padding:8px 0 16px; border-bottom:1px solid var(--border); margin-bottom:24px;}
+.topbar .title{font-weight:700; font-size:15px; color:var(--muted);}
+#themeToggle{background:var(--card); border:1px solid var(--border); color:var(--text); padding:6px 12px; border-radius:8px; cursor:pointer; font-size:13px;}
+h1{font-size:28px; border-bottom:2px solid var(--accent); padding-bottom:10px;}
+h2{font-size:22px; margin-top:44px; color:var(--accent); border-left:4px solid var(--accent); padding-left:10px;}
+h3{font-size:17px; margin-top:26px;}
+p, li{line-height:1.65; font-size:15px;}
+table{width:100%; border-collapse:collapse; margin:14px 0; font-size:13.5px;}
+th, td{border:1px solid var(--border); padding:8px 10px; text-align:left;}
+th{background:var(--bg2);}
+tr:nth-child(even){background:var(--bg2);}
+code{background:var(--code-bg); padding:2px 6px; border-radius:4px; font-size:13px;}
+pre{background:var(--code-bg); border:1px solid var(--border); border-radius:8px; padding:14px; overflow-x:auto; position:relative;}
+pre code{background:none; padding:0;}
+.copy-btn{position:absolute; top:8px; right:8px; background:var(--accent); color:#fff; border:none; padding:4px 10px; border-radius:6px; font-size:11px; cursor:pointer; opacity:0.85;}
+.card{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 20px; margin:16px 0;}
+.callout{border-radius:10px; padding:14px 16px; margin:16px 0; border-left:4px solid var(--accent);}
+.callout.verified{background:var(--callout-info); border-color:#3fb950;}
+.callout.warn{background:var(--callout-warn); border-color:#d29922;}
+.callout.danger{background:var(--callout-danger); border-color:#f85149;}
+.badge{display:inline-block; background:var(--accent); color:#fff; font-size:11px; padding:2px 8px; border-radius:20px; margin-right:6px;}
+.badge.fixed{background:#d29922;}
+#backToTop{position:fixed; bottom:24px; right:24px; background:var(--accent); color:#fff; border:none; width:44px; height:44px; border-radius:50%; font-size:18px; cursor:pointer; display:none; z-index:999;}
+.mermaid{background:var(--bg2); border-radius:10px; padding:10px;}
+@media print{ #sidebar,.topbar,#backToTop,#progress,.copy-btn{display:none !important;} #main{max-width:100%;} }
+@media (max-width:900px){ #sidebar{position:fixed; left:-300px; z-index:1001; transition:left .2s;} #sidebar.open{left:0;} #main{padding:20px;} #menuBtn{display:inline-block !important;} }
+#menuBtn{display:none; background:var(--card); border:1px solid var(--border); color:var(--text); padding:6px 12px; border-radius:8px; cursor:pointer;}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<nav id="sidebar">
+  <input id="search" placeholder="🔍 Search... (Ctrl+K)"/>
+  <h2>Overview</h2>
+  <a href="#overview">1. Chapter Overview</a>
+  <a href="#roadmap">2. Learning Roadmap (verified order)</a>
+  <h2>Verified Topics</h2>
+  <a href="#t1">Why LangChain?</a>
+  <a href="#t2">Setup (Python/JS)</a>
+  <a href="#t3">LLM vs Chat Model Interface</a>
+  <a href="#t4">OpenAI LLM Wrapper</a>
+  <a href="#t5">ChatOpenAI + Message Types</a>
+  <a href="#t6">PromptTemplate</a>
+  <a href="#t7">ChatPromptTemplate</a>
+  <a href="#t8">JSON Output (with_structured_output)</a>
+  <a href="#t9">Output Parsers</a>
+  <a href="#t10">Runnable Interface</a>
+  <a href="#t11">Imperative Composition</a>
+  <a href="#t12">Declarative Composition (LCEL)</a>
+  <a href="#t13">Table 1-1 Comparison</a>
+  <h2>Reference</h2>
+  <a href="#apitable">Function/API Table</a>
+  <a href="#interviewq">Interview Questions</a>
+  <a href="#cheatsheet">Cheat Sheet</a>
+  <a href="#diagrams">Diagrams</a>
+  <a href="#corrections">Corrections Log</a>
+</nav>
+<div id="main">
+  <div class="topbar">
+    <div><button id="menuBtn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+    <span class="title">Learning LangChain — Ch.1 Handbook (VERIFIED)</span></div>
+    <button id="themeToggle" onclick="toggleTheme()">☀️/🌙</button>
+  </div>
+
+  <h1>📘 Chapter 1: LLM Fundamentals with LangChain</h1>
+  <div class="callout verified">
+    <strong>✅ Verified Edition:</strong> This version has been cross-checked directly against the actual chapter text (pages 1–22 of <em>Learning LangChain</em> by Oshin &amp; Campos). All fabricated content from the earlier draft (MessagesPlaceholder, RunnableSequence/Parallel/Passthrough as Ch.1 topics) has been removed. See the <a href="#corrections">Corrections Log</a> for full diff.
+  </div>
+
+  <h2 id="overview">1. Chapter Overview</h2>
+  <table>
+    <tr><th>Item</th><th>Details</th></tr>
+    <tr><td>Real chapter title</td><td>"LLM Fundamentals with LangChain"</td></tr>
+    <tr><td>What it teaches</td><td>LLM vs. Chat Model interfaces, message types, prompt templates, structured/parsed output, and the Runnable interface (imperative vs. declarative/LCEL composition)</td></tr>
+    <tr><td>Core running example</td><td>"Which model providers offer LLMs?" (used throughout prompt/RAG-style examples)</td></tr>
+    <tr><td>Key named components</td><td><code>OpenAI</code>, <code>ChatOpenAI</code>, <code>HumanMessage</code>, <code>AIMessage</code>, <code>SystemMessage</code>, <code>ChatMessage</code>, <code>PromptTemplate</code>, <code>ChatPromptTemplate</code>, <code>with_structured_output</code>, <code>CommaSeparatedListOutputParser</code>, <code>@chain</code> (Python), <code>RunnableLambda</code> (JS)</td></tr>
+    <tr><td>Difficulty</td><td><span class="badge">⭐⭐☆☆☆ Beginner–Intermediate</span></td></tr>
+  </table>
+
+  <h2 id="roadmap">2. Learning Roadmap (Verified Chapter Order)</h2>
+  <div class="mermaid">
+flowchart TD
+A["The challenge: constructing prompts + processing predictions (Fig 1-1)"] --> B["Why LangChain? (prebuilt patterns, interchangeable blocks)"]
+B --> C["Getting Set Up (Python pip / JS npm)"]
+C --> D["Using LLMs in LangChain: LLM interface vs Chat Model interface"]
+D --> E["OpenAI LLM wrapper: model.invoke, params (model/temperature/max_tokens)"]
+E --> F["ChatOpenAI + roles: system/user/assistant"]
+F --> G["Message classes: HumanMessage, AIMessage, SystemMessage, ChatMessage"]
+G --> H["Making Prompts Reusable: PromptTemplate"]
+H --> I["ChatPromptTemplate (role-based dynamic prompts)"]
+I --> J["Getting Specific Formats: JSON Output via with_structured_output (Pydantic/Zod)"]
+J --> K["Other formats: Output Parsers (CommaSeparatedListOutputParser)"]
+K --> L["Runnable Interface: invoke / batch / stream + retries/fallbacks/schemas"]
+L --> M["Imperative Composition: @chain (Python) / RunnableLambda (JS)"]
+M --> N["Declarative Composition: LCEL pipe operator / .pipe()"]
+N --> O["Table 1-1: Imperative vs Declarative comparison"]
+O --> P["Summary -> leads into Chapter 2 (RAG)"]
+  </div>
+
+  <h2 id="t1">Topic: Why LangChain? <span class="badge">⭐☆☆☆☆</span></h2>
+  <p>The chapter's sidebar argues for LangChain over using a raw provider SDK directly, citing two concrete reasons from the text:</p>
+  <ul>
+    <li><strong>Prebuilt common patterns</strong> — reference implementations of chain-of-thought, tool calling, etc., so you don't build them from scratch.</li>
+    <li><strong>Interchangeable building blocks</strong> — every component (LLM, chat model, output parser) follows a shared specification, so swapping providers doesn't require rewrites.</li>
+  </ul>
+  <p>The book's own running example components: <strong>LLM/chat model: OpenAI</strong>, <strong>Embeddings: OpenAI</strong>, <strong>Vector store: PGVector</strong> — with suggested swap-outs: Anthropic/Ollama for chat models, Cohere/Ollama for embeddings, Weaviate/OpenSearch for vector stores.</p>
+  <p>Also mentioned: OpenAI and Anthropic both expose chat APIs with messages (type + content), but their formats are <em>subtly incompatible</em> — LangChain abstracts this so a single conversation could even mix providers. Additional orchestration benefits cited: a shared callbacks system for observability, a shared interface across major components, and the ability to interrupt/resume/retry long-running applications.</p>
+
+  <h2 id="t2">Topic: Getting Set Up with LangChain <span class="badge">⭐☆☆☆☆</span></h2>
+  <p><strong>Python:</strong> install Python + Jupyter (<code>pip install notebook</code>), then:</p>
+  <pre><code>pip install langchain langchain-openai langchain-community
+pip install langchain-text-splitters langchain-postgres</code></pre>
+  <p>Set <code>export OPENAI_API_KEY=your-key</code>, then run <code>jupyter notebook</code>.</p>
+  <p><strong>JavaScript:</strong> set the same env var, install Node, then:</p>
+  <pre><code>npm install langchain @langchain/openai @langchain/community
+npm install @langchain/core pg</code></pre>
+
+  <h2 id="t3">Topic: LLM Interface vs. Chat Model Interface <span class="badge">⭐⭐☆☆☆</span></h2>
+  <p>LangChain provides <strong>two simple interfaces</strong> to interact with any LLM API provider: <strong>LLMs</strong> and <strong>Chat models</strong>.</p>
+  <ul>
+    <li><strong>LLM interface:</strong> takes a string prompt as input, sends it to the provider, returns the prediction as output. Example: <code>OpenAI(model="gpt-3.5-turbo")</code>.</li>
+    <li><strong>Chat model interface:</strong> enables back-and-forth conversations; messages are differentiated into <strong>system</strong>, <strong>user</strong>, and <strong>assistant</strong> roles.
+      <ul>
+        <li><strong>System role</strong> — instructions the model should use to answer a user question.</li>
+        <li><strong>User role</strong> — the user's query and other user-produced content.</li>
+        <li><strong>Assistant role</strong> — content generated by the model.</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h2 id="t4">Topic: The OpenAI LLM Wrapper &amp; Parameters <span class="badge">⭐⭐☆☆☆</span></h2>
+  <p>Example from the book:</p>
+  <pre><code># Python
+from langchain_openai.llms import OpenAI
+model = OpenAI(model="gpt-3.5-turbo")
+model.invoke("The sky is")
+# Output: "Blue!"</code></pre>
+  <p><strong>Documented parameters (verbatim from the chapter):</strong></p>
+  <table>
+    <tr><th>Parameter</th><th>What it does</th></tr>
+    <tr><td><code>model</code></td><td>The most common config — which underlying model to use (trade-off of capability vs. cost/speed)</td></tr>
+    <tr><td><code>temperature</code></td><td>Controls sampling randomness. Lower (e.g. 0.1) = predictable; higher (e.g. 0.9) = creative/unexpected. Structured output benefits from low temp; creative writing from high temp.</td></tr>
+    <tr><td><code>max_tokens</code></td><td>Limits output size/cost; too low may truncate output before a natural end.</td></tr>
+  </table>
+
+  <h2 id="t5">Topic: ChatOpenAI + Message Types <span class="badge">⭐⭐☆☆☆</span></h2>
+  <pre><code># Python
+from langchain_openai.chat_models import ChatOpenAI
+from langchain_core.messages import HumanMessage
+model = ChatOpenAI()
+prompt = [HumanMessage("What is the capital of France?")]
+model.invoke(prompt)
+# AIMessage(content='The capital of France is Paris.')</code></pre>
+  <p>Four message classes are named explicitly in the chapter:</p>
+  <table>
+    <tr><th>Class</th><th>Role</th><th>Description from text</th></tr>
+    <tr><td><code>HumanMessage</code></td><td>user</td><td>"A message sent from the perspective of the human"</td></tr>
+    <tr><td><code>AIMessage</code></td><td>assistant</td><td>"A message sent from the perspective of the AI that the human is interacting with"</td></tr>
+    <tr><td><code>SystemMessage</code></td><td>system</td><td>"A message setting the instructions the AI should follow"</td></tr>
+    <tr><td><code>ChatMessage</code></td><td>arbitrary</td><td>"A message allowing for arbitrary setting of role"</td></tr>
+  </table>
+  <p>Example combining SystemMessage: instructing the model to "respond to questions with three exclamation marks" → output: <code>AIMessage('Paris!!!')</code>. The chapter notes: <em>"the model obeyed the instruction provided in the SystemMessage even though it wasn't present in the user's question."</em></p>
+
+  <h2 id="t6">Topic: PromptTemplate <span class="badge">⭐⭐☆☆☆</span></h2>
+  <p>Solves the problem: a hardcoded prompt string can't vary based on user input. <code>PromptTemplate.from_template(...)</code> uses <strong>Python f-string syntax</strong> — <code>{context}</code>, <code>{question}</code> placeholders filled in via <code>.invoke({...})</code>. Returns a <code>StringPromptValue</code>.</p>
+  <p>The chapter explicitly states: <em>"both `template` and `model` can be reused many times"</em> — reusability is the whole point.</p>
+
+  <h2 id="t7">Topic: ChatPromptTemplate <span class="badge">⭐⭐⭐☆☆</span></h2>
+  <p>Built with <code>ChatPromptTemplate.from_messages([("system", ...), ("human", ...), ("human", ...)])</code>. Returns a <code>ChatPromptValue</code> wrapping a list of <code>SystemMessage</code>/<code>HumanMessage</code> objects — the correct shape for chat models. Used identically to PromptTemplate: <code>template.invoke({...})</code> then pass the result to <code>model.invoke(...)</code>.</p>
+
+  <h2 id="t8">Topic: JSON Output — with_structured_output() <span class="badge">⭐⭐⭐⭐☆</span></h2>
+  <p>This is presented specifically as a technique for getting <strong>JSON</strong> out of an LLM (the chapter's broader heading is "Getting Specific Formats out of LLMs").</p>
+  <pre><code># Python
+class AnswerWithJustification(BaseModel):
+    answer: str
+    justification: str
+
+llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
+structured_llm = llm.with_structured_output(AnswerWithJustification)
+structured_llm.invoke("What weighs more, a pound of bricks or a pound of feathers")</code></pre>
+  <p>Schema defined with <strong>Pydantic</strong> (Python) or <strong>Zod</strong> (JS). Per the text, <code>with_structured_output</code> uses the schema for <strong>two things</strong>:</p>
+  <ol>
+    <li>Converts the schema to a JSONSchema object sent to the LLM (LangChain picks function calling or prompting per-model).</li>
+    <li>Validates the LLM's returned output against that schema before returning it to you.</li>
+  </ol>
+
+  <h2 id="t9">Topic: Output Parsers <span class="badge">⭐⭐☆☆☆</span></h2>
+  <p>For "other machine-readable formats" beyond JSON (CSV, XML, etc.). The chapter's concrete example is <code>CommaSeparatedListOutputParser</code>:</p>
+  <pre><code>parser = CommaSeparatedListOutputParser()
+parser.invoke("apple, banana, cherry")
+# ['apple', 'banana', 'cherry']</code></pre>
+  <p>Two stated functions of output parsers: (1) <strong>providing format instructions</strong> injected into the prompt, and (2) <strong>validating and parsing output</strong> into a structured format (removing extraneous text, correcting incomplete output, validating values).</p>
+
+  <h2 id="t10">Topic: The Runnable Interface <span class="badge">⭐⭐⭐⭐☆</span></h2>
+  <p>The chapter states plainly: <em>"all the code examples used so far utilize a similar interface and the invoke() method... All components have the following: a common interface with invoke/batch/stream, built-in utilities for retries, fallbacks, schemas, and runtime configurability, and (in Python) asyncio equivalents for each method."</em></p>
+  <table>
+    <tr><th>Method</th><th>What the text says it does</th></tr>
+    <tr><td><code>invoke()</code></td><td>"takes a single input and returns a single output"</td></tr>
+    <tr><td><code>batch()</code></td><td>"takes a list of outputs and returns a list of outputs" (efficiently transforms multiple inputs)</td></tr>
+    <tr><td><code>stream()</code></td><td>"takes a single input and returns an iterator of parts of the output as they become available"</td></tr>
+  </table>
+  <p><strong>Note:</strong> "In some cases, where the underlying component doesn't support iterative output, there will be a single part containing all output" for <code>stream()</code>.</p>
+
+  <h2 id="t11">Topic: Imperative Composition <span class="badge">⭐⭐☆☆☆</span></h2>
+  <p>Definition (verbatim spirit): "just a fancy name for writing the code you're used to writing, composing these components into functions and classes."</p>
+  <pre><code># Python — uses the @chain decorator
+from langchain_core.runnables import chain
+
+@chain
+def chatbot(values):
+    prompt = template.invoke(values)
+    return model.invoke(prompt)
+
+chatbot.invoke({"question": "Which model providers offer LLMs?"})</code></pre>
+  <pre><code>// JavaScript — uses RunnableLambda.from
+import {RunnableLambda} from '@langchain/core/runnables'
+const chatbot = RunnableLambda.from(async values => {
+  const prompt = await template.invoke(values)
+  return await model.invoke(prompt)
+})</code></pre>
+  <p><strong>Key fact:</strong> to add streaming support imperatively, you must manually rewrite the function to <code>yield</code> tokens (Python) or use <code>function*</code>/<code>yield</code> (JS). To add async support in Python, rewrite using <code>async def</code> + <code>ainvoke</code>. The text notes: <em>"asynchronous execution is the only option in JavaScript."</em></p>
+
+  <h2 id="t12">Topic: Declarative Composition (LCEL) <span class="badge">⭐⭐⭐⭐☆</span></h2>
+  <p>Definition (verbatim spirit): "LCEL is a declarative language for composing LangChain components. LangChain compiles LCEL compositions to an optimized execution plan, with automatic parallelization, streaming, tracing, and async support."</p>
+  <pre><code># Python
+chatbot = template | model
+chatbot.invoke({"question": "Which model providers offer LLMs?"})</code></pre>
+  <pre><code>// JavaScript — uses .pipe() instead of |
+const chatbot = template.pipe(model)</code></pre>
+  <p><strong>Crucially</strong>, the chapter emphasizes: the last line (<code>.invoke</code>/<code>.stream</code>/<code>.batch</code>) is <em>identical</em> whether you used the imperative function or the LCEL chain — and with LCEL <strong>you don't need to do anything else</strong> to get streaming or async working; it's automatic.</p>
+
+  <h2 id="t13">Table 1-1: Imperative vs. Declarative Composition (verbatim from book)</h2>
+  <table>
+    <tr><th></th><th>Imperative</th><th>Declarative</th></tr>
+    <tr><td>Syntax</td><td>All of Python or JavaScript</td><td>LCEL</td></tr>
+    <tr><td>Parallel execution</td><td>Python: with threads or coroutines / JS: with Promise.all</td><td>Automatic</td></tr>
+    <tr><td>Streaming</td><td>With <code>yield</code> keyword</td><td>Automatic</td></tr>
+    <tr><td>Async execution</td><td>With async functions</td><td>Automatic</td></tr>
+  </table>
+
+  <h2 id="apitable">Function / API Reference (only items actually named in Ch.1)</h2>
+  <table>
+    <tr><th>Name</th><th>Language</th><th>Role in chapter</th></tr>
+    <tr><td><code>OpenAI</code></td><td>Py/JS</td><td>LLM wrapper (string in/out)</td></tr>
+    <tr><td><code>ChatOpenAI</code></td><td>Py/JS</td><td>Chat model wrapper (messages in/out)</td></tr>
+    <tr><td><code>HumanMessage</code>/<code>AIMessage</code>/<code>SystemMessage</code>/<code>ChatMessage</code></td><td>Py/JS</td><td>Role-tagged message classes</td></tr>
+    <tr><td><code>PromptTemplate</code></td><td>Py/JS</td><td>Reusable single-string templating (f-string style placeholders)</td></tr>
+    <tr><td><code>ChatPromptTemplate</code></td><td>Py/JS</td><td>Reusable role-based message templating</td></tr>
+    <tr><td><code>with_structured_output()</code></td><td>Py/JS</td><td>Forces schema-conformant JSON output (Pydantic/Zod)</td></tr>
+    <tr><td><code>CommaSeparatedListOutputParser</code></td><td>Py/JS</td><td>Parses comma text into a list</td></tr>
+    <tr><td><code>invoke()</code> / <code>batch()</code> / <code>stream()</code></td><td>Py/JS</td><td>The shared Runnable methods</td></tr>
+    <tr><td><code>@chain</code> decorator</td><td>Python only</td><td>Turns a plain function into a Runnable (imperative)</td></tr>
+    <tr><td><code>RunnableLambda.from()</code></td><td>JavaScript only</td><td>JS equivalent of <code>@chain</code></td></tr>
+    <tr><td><code>\|</code> pipe operator</td><td>Python</td><td>LCEL composition</td></tr>
+    <tr><td><code>.pipe()</code></td><td>JavaScript</td><td>LCEL composition (JS equivalent of <code>\|</code>)</td></tr>
+  </table>
+  <div class="callout warn"><strong>Note:</strong> <code>RunnableSequence</code>, <code>RunnableParallel</code>, <code>RunnablePassthrough</code>, and <code>MessagesPlaceholder</code> are real LangChain classes used in <strong>later chapters</strong> (e.g., Ch.2–4), but are <strong>not named or introduced in Chapter 1</strong>.</div>
+
+  <h2 id="interviewq">Sample Interview Questions (Verified Against Text)</h2>
+  <table>
+    <tr><th>Q</th><th>A (from verified chapter content)</th></tr>
+    <tr><td>What two interfaces does LangChain provide to talk to any LLM provider?</td><td>The LLM interface and the Chat model interface.</td></tr>
+    <tr><td>What are the three roles used in chat model messages?</td><td>System, user, and assistant.</td></tr>
+    <tr><td>What does <code>temperature</code> control?</td><td>The randomness of the sampling algorithm — lower = predictable, higher = creative/unexpected.</td></tr>
+    <tr><td>What two things does <code>with_structured_output</code> use the schema for?</td><td>(1) Converting it to JSONSchema sent to the LLM, and (2) validating the LLM's returned output against it.</td></tr>
+    <tr><td>What decorator turns a Python function into a Runnable?</td><td><code>@chain</code> from <code>langchain_core.runnables</code>.</td></tr>
+    <tr><td>What is the JS equivalent of the <code>@chain</code> decorator?</td><td><code>RunnableLambda.from(...)</code>.</td></tr>
+    <tr><td>According to Table 1-1, how is streaming achieved imperatively vs. declaratively?</td><td>Imperatively: with the <code>yield</code> keyword. Declaratively: automatic.</td></tr>
+    <tr><td>Is asynchronous execution optional in JavaScript?</td><td>No — the chapter states it's "the only option in JavaScript."</td></tr>
+  </table>
+
+  <h2 id="cheatsheet">Cheat Sheet</h2>
+  <pre><code>LLM interface:      string in -> string out   (OpenAI class)
+Chat interface:     messages in -> message out (ChatOpenAI class)
+Roles:               system / user / assistant
+Messages:            HumanMessage, AIMessage, SystemMessage, ChatMessage
+
+PromptTemplate       -> single string, {var} placeholders
+ChatPromptTemplate    -> list of role-tagged messages
+
+with_structured_output(Schema)  -> validated object (Pydantic/Zod)
+CommaSeparatedListOutputParser  -> text -> list
+
+Runnable: invoke() / batch() / stream() (+ retries, fallbacks, schemas, runtime config)
+          Python also has asyncio equivalents (ainvoke, abatch, astream)
+
+Imperative: @chain (Python) | RunnableLambda.from (JS) -- manual yield/async needed
+Declarative (LCEL): template | model  (Python)  |  template.pipe(model) (JS)
+                     -> streaming & async automatic
+</code></pre>
+
+  <h2 id="diagrams">Diagram: Verified Concept Flow</h2>
+  <div class="mermaid">
+graph LR
+A[OpenAI / ChatOpenAI] --> B[Messages: Human/AI/System/Chat]
+B --> C[PromptTemplate / ChatPromptTemplate]
+C --> D[with_structured_output / Output Parsers]
+D --> E[Runnable: invoke/batch/stream]
+E --> F1[Imperative: @chain / RunnableLambda]
+E --> F2[Declarative: LCEL pipe / .pipe]
+F1 --> G[Same .invoke/.stream/.batch usage]
+F2 --> G
+  </div>
+
+  <h2 id="corrections">Corrections Log (vs. earlier unverified draft)</h2>
+  <ul>
+    <li><span class="badge fixed">Removed</span> "MessagesPlaceholder" as a Ch.1 topic (it does not appear in Ch.1; a placeholder tuple appears in Ch.4).</li>
+    <li><span class="badge fixed">Removed</span> "RunnableSequence" as a named Ch.1 class (never named in the chapter — only implied by <code>\|</code>/<code>.pipe()</code>).</li>
+    <li><span class="badge fixed">Removed</span> "RunnableParallel" and "RunnablePassthrough" as Ch.1 topics (not introduced until later chapters).</li>
+    <li><span class="badge fixed">Corrected</span> imperative composition mechanism: Python uses the <code>@chain</code> decorator; JS uses <code>RunnableLambda.from()</code> — these were previously conflated.</li>
+    <li><span class="badge fixed">Corrected</span> output parser example to the actual one used: <code>CommaSeparatedListOutputParser</code>.</li>
+    <li><span class="badge fixed">Corrected</span> structured-output section to reflect it's specifically framed under "JSON Output," not a standalone generic topic.</li>
+    <li><span class="badge fixed">Added</span> the verbatim Table 1-1 (Imperative vs. Declarative) exactly as it appears in the book.</li>
+  </ul>
+
+  <p style="margin-top:50px; color:var(--muted); font-size:12px;">⌨️ Ctrl+K to search · Ctrl+D to toggle theme.</p>
+</div>
+<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script>
+mermaid.initialize({startOnLoad:true, theme:'dark'});
+hljs.highlightAll();
+function toggleTheme(){
+  const html=document.documentElement;
+  const next = html.getAttribute('data-theme')==='dark' ? 'light':'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  mermaid.initialize({theme: next==='dark'?'dark':'default'});
+}
+if(localStorage.getItem('theme')) document.documentElement.setAttribute('data-theme', localStorage.getItem('theme'));
+window.addEventListener('scroll', ()=>{
+  const h=document.documentElement;
+  document.getElementById('progress').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+  document.getElementById('backToTop').style.display = h.scrollTop>400?'block':'none';
+});
+document.querySelectorAll('pre').forEach(pre=>{
+  const btn=document.createElement('button'); btn.className='copy-btn'; btn.textContent='Copy';
+  btn.onclick=()=>{navigator.clipboard.writeText(pre.innerText); btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy',1500);};
+  pre.appendChild(btn);
+});
+document.getElementById('search').addEventListener('input', function(){
+  const q=this.value.toLowerCase();
+  document.querySelectorAll('#sidebar a').forEach(a=>{a.style.display=a.textContent.toLowerCase().includes(q)?'block':'none';});
+});
+document.addEventListener('keydown',(e)=>{
+  if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();document.getElementById('search').focus();}
+  if((e.ctrlKey||e.metaKey)&&e.key==='d'){e.preventDefault();toggleTheme();}
+});
+</script>
+</body>
+</html>
