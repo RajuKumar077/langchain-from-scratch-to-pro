@@ -10,6 +10,7 @@ Goal
 - Keep prompts clear and focused
 """
 
+# pyrefly: ignore [missing-import]
 from langchain_core.prompts import ChatPromptTemplate
 
 
