@@ -10,6 +10,7 @@ Goal
 - Implement basic error handling for memory workflows
 """
 
+# pyrefly: ignore [missing-import]
 from langchain_ollama import ChatOllama
 
 from langchain_core.prompts import (
@@ -41,7 +42,7 @@ llm = ChatOllama(
 # Create Prompt
 # -------------------------------------------------
 
-prompt = ChatPromptTemplate.from_messages([
+prompt =   ChatPromptTemplate.from_messages([
     (
         "system",
         """
