@@ -48,7 +48,7 @@ def check_service_health(
 # -------------------------------------------------
 
 llm = ChatOllama(
-    model="qwen2.5:7b",
+    model="qwen3:8b",
     temperature=0,
 )
 

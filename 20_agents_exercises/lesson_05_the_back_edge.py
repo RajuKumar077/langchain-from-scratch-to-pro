@@ -1,7 +1,11 @@
 """
 Module 20 - Agent Architecture
 Lesson 05 - The Back-Edge: Closing the Loop
-
+┌──────────────────────┐
+                  ▼                      │
+START ──> [model] ──(tools_condition)──> [tools]
+            │
+            └──(No tool calls)──> END
 Goal
 ----
 - Wire tools -> model - the edge that turns a chain into a loop

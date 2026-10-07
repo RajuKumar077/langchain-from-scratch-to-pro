@@ -40,7 +40,7 @@ def restart_service(
 # -------------------------------------------------
 
 llm = ChatOllama(
-    model="qwen2.5:7b",
+    model="qwen3:8b",
     temperature=0,
 )
 

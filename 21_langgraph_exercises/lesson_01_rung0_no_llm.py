@@ -85,3 +85,27 @@ print("=" * 60)
 
 print(f"Ticket:   {ticket_text}")
 print(f"Category: {result['category']}")
+
+
+# -------------------------------------------------
+# Visualizations
+# -------------------------------------------------
+
+print("\n" + "=" * 60)
+print("GRAPH VISUALIZATION (MERMAID TEXT)")
+print("=" * 60)
+
+# Option A: Print Mermaid syntax (paste this into GitHub/VS Code Markdown)
+print(graph.get_graph().draw_mermaid())
+
+
+# Option B: Save directly to a PNG image file
+try:
+    png_bytes = graph.get_graph().draw_mermaid_png()
+    with open("ticket_graph.png", "wb") as f:
+        f.write(png_bytes)
+    print("\n[SUCCESS] Graph visualization saved as 'ticket_graph.png'")
+except Exception as e:
+    print(f"\n[NOTE] Could not generate PNG file automatically: {e}")
+    print("Ensure internet connection or pillow library is installed.")
+
