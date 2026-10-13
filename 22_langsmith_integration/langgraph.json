@@ -1,0 +1,9 @@
+{
+  "dependencies": [
+    "."
+  ],
+  "graphs": {
+    "agent": "./04_langgraph_cloud_deployment.py:graph"
+  },
+  "env": ".env"
+}
